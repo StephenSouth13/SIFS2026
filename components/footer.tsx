@@ -14,7 +14,7 @@ const content = {
     followUs: "Theo dõi chúng tôi",
     copyright: "© 2026 SIFS - Ngày Hội Khởi Nghiệp & Đổi Mới Sáng Tạo",
     organizedBy: "Được tổ chức bởi Startup & Innovation Hub HCMC (SIHUB)",
-    links: ["Trang Chủ", "Chương Trình", "Tài Trợ", "Gian Hàng", "Liên Hệ"],
+    links: ["Trang Chủ", "Chương Trình", "Gian Hàng", "Liên Hệ"],
   },
   en: {
     quickLinks: "Quick Links",
@@ -22,7 +22,7 @@ const content = {
     followUs: "Follow Us",
     copyright: "© 2026 SIFS - Spring Innovation Festival Summit",
     organizedBy: "Organized by Startup & Innovation Hub HCMC (SIHUB)",
-    links: ["Home", "Agenda", "Sponsors", "Booths", "Contact"],
+    links: ["Home", "Agenda", "Sponsors", "Contact"],
   },
 }
 

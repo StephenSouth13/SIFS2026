@@ -1,3 +1,60 @@
+UPDATE site_content 
+SET content = jsonb_build_object(
+  'title', COALESCE(content->>'title', 'SIFS 2026'),
+  'target_date', COALESCE(content->>'target_date', '2026-02-06T00:00:00'),
+  'slides', COALESCE(content->'slides', '[]'::jsonb),
+  'use_carousel', COALESCE((content->>'use_carousel')::boolean, true),
+  'text_color', COALESCE(content->>'text_color', 'white'),
+  'title_color', COALESCE(content->>'title_color', '#FFD700'),
+  'overlay_opacity', COALESCE((content->>'overlay_opacity')::int, 60),
+  'font_family', COALESCE(content->>'font_family', 'font-serif italic'),
+  'show_countdown', COALESCE((content->>'show_countdown')::boolean, true),
+  'show_info_card', COALESCE((content->>'show_info_card')::boolean, true),
+  'show_cta1', COALESCE((content->>'show_cta1')::boolean, true),
+  'show_cta2', COALESCE((content->>'show_cta2')::boolean, true),
+  'subtitle_vi', COALESCE(content->>'subtitle_vi', 'Ngày Hội Khởi Nghiệp'),
+  'subtitle_en', COALESCE(content->>'subtitle_en', 'Innovation Festival'),
+  'tagline_vi', COALESCE(content->>'tagline_vi', ''),
+  'tagline_en', COALESCE(content->>'tagline_en', ''),
+  'location_vi', COALESCE(content->>'location_vi', 'SIHUB, TP.HCM'),
+  'location_en', COALESCE(content->>'location_en', 'SIHUB, HCMC'),
+  'date_text_vi', '06/02 - 07/02/2026',
+  'time_text_vi', '09:00 - 18:00'
+)
+WHERE section_name = 'hero';
+UPDATE site_content 
+SET content = jsonb_build_object(
+  'title_vi', '4 Trụ Cột SIFS 2026',
+  'title_en', '4 Pillars of SIFS 2026',
+  'pillars', jsonb_build_array(
+    jsonb_build_object(
+      'id', 'p1', 
+      'title_vi', 'Công nghệ', 'title_en', 'Technology', 
+      'description_vi', 'Tiên phong ứng dụng AI và giải pháp số vào hệ sinh thái khởi nghiệp.', 'description_en', 'Pioneering AI and digital solutions in the startup ecosystem.', 
+      'icon_name', 'Cpu'
+    ),
+    jsonb_build_object(
+      'id', 'p2', 
+      'title_vi', 'Kết nối', 'title_en', 'Connection', 
+      'description_vi', 'Mở rộng mạng lưới giữa các Startup, Quỹ đầu tư và Chính phủ.', 'description_en', 'Expanding networks between Startups, VCs, and Government.', 
+      'icon_name', 'Users'
+    ),
+    jsonb_build_object(
+      'id', 'p3', 
+      'title_vi', 'Đổi mới', 'title_en', 'Innovation', 
+      'description_vi', 'Thúc đẩy tư duy sáng tạo và đột phá trong mô hình kinh doanh.', 'description_en', 'Promoting creative thinking and breakthroughs in business models.', 
+      'icon_name', 'Zap'
+    ),
+    jsonb_build_object(
+      'id', 'p4', 
+      'title_vi', 'Bền vững', 'title_en', 'Sustainability', 
+      'description_vi', 'Xây dựng giá trị dài hạn cho cộng đồng và môi trường.', 'description_en', 'Building long-term value for the community and environment.', 
+      'icon_name', 'Leaf'
+    )
+  )
+)
+WHERE section_name = 'pillars';
+
 "use client"
 
 import { motion } from "framer-motion"

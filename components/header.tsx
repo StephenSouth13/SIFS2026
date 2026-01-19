@@ -15,7 +15,7 @@ const content = {
       { label: "Trang Chủ", id: "home" },
       { label: "Chương Trình", id: "agenda" },
       { label: "Ban Cố Vấn", id: "advisors" },
-      { label: "Tài Trợ", id: "pricing" },
+     
       { label: "Gian Hàng", id: "booth" },
     ],
     register: "Đăng ký",
@@ -25,7 +25,7 @@ const content = {
       { label: "Home", id: "home" },
       { label: "Agenda", id: "agenda" },
       { label: "Advisors", id: "advisors" },
-      { label: "Sponsors", id: "pricing" },
+      
       { label: "Booths", id: "booth" },
     ],
     register: "Register",

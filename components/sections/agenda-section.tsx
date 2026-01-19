@@ -1,157 +1,114 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
-import { Clock } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Clock, Calendar } from "lucide-react"
+import { AgendaSectionData } from "@/types/cms"
 
 interface AgendaSectionProps {
   language: "vi" | "en"
+  data: AgendaSectionData | undefined
 }
 
-const content = {
-  vi: {
-    title: "Chương Trình Sự Kiện",
-    days: [
-      {
-        date: "06/02/2026",
-        events: [
-          { time: "09:00 - 09:30", title: "Khai mạc sự kiện", description: "Chào mừng từ ban tổ chức" },
-          {
-            time: "09:30 - 11:00",
-            title: "Seminar 1: AI & Tự Động Hóa",
-            description: "Thảo luận về tương lai công nghệ AI",
-          },
-          { time: "11:00 - 18:00", title: "Trưng bày & Networking", description: "Gặp gỡ các startup và nhà tạo ra" },
-        ],
-      },
-      {
-        date: "07/02/2026",
-        events: [
-          {
-            time: "09:00 - 11:00",
-            title: "Seminar 2: Nhân Sự Chất Lượng Cao",
-            description: "Xây dựng đội ngũ xuất sắc",
-          },
-          {
-            time: "11:00 - 13:00",
-            title: "Seminar 3: Sáng Tạo & Design Thinking",
-            description: "Đổi mới trong kinh doanh",
-          },
-          {
-            time: "13:00 - 15:00",
-            title: "Seminar 4: Huy Động Vốn & Đầu Tư",
-            description: "Chiến lược gọi vốn thành công",
-          },
-          {
-            time: "15:30 - 18:00",
-            title: 'Chạy bộ "Run for Future"',
-            description: "Gây quỹ cho sinh viên khó khăn - Mục tiêu: 50 tỷ VND",
-          },
-        ],
-      },
-    ],
-  },
-  en: {
-    title: "Event Agenda",
-    days: [
-      {
-        date: "06/02/2026",
-        events: [
-          { time: "09:00 - 09:30", title: "Opening Ceremony", description: "Welcome from organizers" },
-          {
-            time: "09:30 - 11:00",
-            title: "Seminar 1: AI & Automation",
-            description: "Discussing the future of technology",
-          },
-          { time: "11:00 - 18:00", title: "Showcase & Networking", description: "Meet startups and innovators" },
-        ],
-      },
-      {
-        date: "07/02/2026",
-        events: [
-          {
-            time: "09:00 - 11:00",
-            title: "Seminar 2: High-Quality Human Resources",
-            description: "Building excellent teams",
-          },
-          {
-            time: "11:00 - 13:00",
-            title: "Seminar 3: Innovation & Design Thinking",
-            description: "Business innovation",
-          },
-          {
-            time: "13:00 - 15:00",
-            title: "Seminar 4: Fundraising & Investment",
-            description: "Successful fundraising strategy",
-          },
-          {
-            time: "15:30 - 18:00",
-            title: '"Run for Future" Charity Run',
-            description: "Fundraising for students in need - Target: 50 billion VND",
-          },
-        ],
-      },
-    ],
-  },
-}
-
-export default function AgendaSection({ language }: AgendaSectionProps) {
-  const t = content[language]
+export default function AgendaSection({ language, data }: AgendaSectionProps) {
   const [activeDay, setActiveDay] = useState(0)
+  if (!data) return null;
+
+  const title = language === "vi" ? data.title_vi : data.title_en;
+  const days = data.days || [];
 
   return (
-    <section className="py-20 px-4">
-      <div className="max-w-4xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
+    <section id="agenda" className="py-24 px-4 relative">
+      <div className="max-w-4xl mx-auto relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold text-center mb-12 neon-text font-serif"
+          className="text-center mb-16"
         >
-          {t.title}
-        </motion.h2>
+          <h2 className="text-4xl md:text-6xl font-black neon-text font-serif italic mb-6 text-white">
+            {title}
+          </h2>
+        </motion.div>
 
-        <div className="flex gap-4 justify-center mb-8">
-          {t.days.map((day, index) => (
+        {/* Nút chọn Ngày */}
+        <div className="flex flex-wrap gap-4 justify-center mb-12">
+          {days.map((day, index) => (
             <button
-              key={index}
+              key={day.id}
               onClick={() => setActiveDay(index)}
-              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                activeDay === index ? "bg-primary text-primary-foreground neon-glow" : "glass glass-hover"
+              className={`group relative px-8 py-4 rounded-2xl font-black transition-all duration-300 overflow-hidden ${
+                activeDay === index 
+                ? "text-white scale-110 shadow-[0_0_20px_rgba(230,0,0,0.4)]" 
+                : "text-gray-400 hover:text-white"
               }`}
             >
-              {day.date}
+              {activeDay === index && (
+                <motion.div 
+                  layoutId="activeTab"
+                  className="absolute inset-0 bg-primary"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center gap-2">
+                <Calendar size={16} />
+                {day.date}
+              </span>
             </button>
           ))}
         </div>
 
-        <motion.div
-          key={activeDay}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-4"
-        >
-          {t.days[activeDay].events.map((event, index) => (
+        {/* Danh sách sự kiện */}
+        <div className="relative">
+          {/* Đường line chạy dọc Timeline */}
+          <div className="absolute left-[31px] top-0 bottom-0 w-px bg-linear-to-b from-primary/50 via-primary/20 to-transparent hidden md:block" />
+
+          <AnimatePresence mode="wait">
             <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -20 }}
+              key={activeDay}
+              initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="glass rounded-lg p-6 glass-hover"
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.4 }}
+              className="space-y-6"
             >
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <Clock className="w-5 h-5 text-secondary mt-1" />
-                </div>
-                <div className="flex-grow">
-                  <p className="text-secondary font-semibold">{event.time}</p>
-                  <h3 className="text-lg font-bold text-foreground mt-1">{event.title}</h3>
-                  <p className="text-muted-foreground text-sm mt-2">{event.description}</p>
-                </div>
-              </div>
+              {days[activeDay]?.events.map((event, index) => {
+                const eTitle = language === "vi" ? event.title_vi : event.title_en;
+                const eDesc = language === "vi" ? event.desc_vi : event.desc_en;
+
+                return (
+                  <motion.div
+                    key={event.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="glass-tet p-8 rounded-[2rem] glass-hover relative group"
+                  >
+                    <div className="flex flex-col md:flex-row gap-6">
+                      <div className="flex-shrink-0 flex items-center gap-3 md:w-32">
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-secondary border border-primary/30 group-hover:scale-125 transition-transform">
+                          <Clock size={14} />
+                        </div>
+                        <span className="text-secondary font-black text-sm tracking-tighter">
+                          {event.time}
+                        </span>
+                      </div>
+
+                      <div className="flex-grow">
+                        <h3 className="text-xl md:text-2xl font-black text-white mb-2 font-serif group-hover:text-secondary transition-colors">
+                          {eTitle}
+                        </h3>
+                        <p className="text-gray-400 text-sm leading-relaxed font-medium">
+                          {eDesc}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })}
             </motion.div>
-          ))}
-        </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   )
