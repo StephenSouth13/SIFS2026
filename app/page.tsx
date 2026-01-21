@@ -27,39 +27,52 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    )
-  }
-
+  // FIX LỖI "Rendered fewer hooks": 
+  // Luôn phải để logic render chính ở cuối, không return sớm giữa chừng.
   return (
-    <main className="bg-linear-to-b from-[#050505] via-[#1a0000] to-[#050505] text-white overflow-hidden selection:bg-primary/30">
-      <Starfield />
-      <Header language={language} onLanguageChange={setLanguage} />
+    <main className="bg-linear-to-b from-[#050505] via-[#1a0000] to-[#050505] text-white overflow-hidden selection:bg-primary/30 min-h-screen">
+      {loading ? (
+        <div className="fixed inset-0 bg-[#050505] flex flex-col items-center justify-center z-[999]">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-primary font-black uppercase tracking-widest text-[10px] animate-pulse">SIFS 2026 is Loading...</p>
+        </div>
+      ) : (
+        <>
+          <Starfield />
+          
+          {/* FIX LỖI 2741: Truyền data={content?.header} */}
+          <Header 
+            language={language} 
+            onLanguageChange={setLanguage} 
+            data={content?.header} 
+          />
 
-      <div id="home">
-        <HeroSection language={language} data={content?.hero} />
-      </div>
+          <div id="home">
+            <HeroSection language={language} data={content?.hero} />
+          </div>
 
-      <PillarsSection language={language} data={content?.pillars} />
-      <USPSection language={language} data={content?.usp} />
+          <PillarsSection language={language} data={content?.pillars} />
+          <USPSection language={language} data={content?.usp} />
 
-      <div id="advisors">
-        <AdvisorsSection language={language} data={content?.advisors} />
-      </div>
+          <div id="advisors">
+            {/* TRUYỀN DATA CMS VÀO ADVISORS */}
+            <AdvisorsSection language={language} data={content?.advisors} />
+          </div>
 
-      <BoothMapSection language={language} data={content?.boothMap} />
+          <BoothMapSection language={language} data={content?.boothMap} />
 
-      <div id="agenda">
-        <AgendaSection language={language} data={content?.agenda} />
-      </div>
+          <div id="agenda">
+            <AgendaSection language={language} data={content?.agenda} />
+          </div>
 
-      <ContactSection language={language} data={content?.contact} />
-      <Footer language={language} data={content?.footer} />
-      <BackToTop visible={showBackToTop} />
+          <ContactSection language={language} data={content?.contact} />
+          
+          {/* TRUYỀN DATA CMS VÀO FOOTER */}
+          <Footer language={language} data={content?.footer} />
+          
+          <BackToTop visible={showBackToTop} />
+        </>
+      )}
     </main>
   )
 }

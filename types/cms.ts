@@ -1,5 +1,3 @@
-// D:\Website\SIFS2026\types\cms.ts
-
 // --- COMMON TYPES ---
 export interface CmsSectionProps<T> {
   data: T;
@@ -83,6 +81,8 @@ export interface AdvisorItem {
   name_en: string;
   role_vi: string;
   role_en: string;
+  bio_vi: string; // Thêm mô tả chi tiết VI
+  bio_en: string; // Thêm mô tả chi tiết EN
   image: string;
 }
 
@@ -94,7 +94,7 @@ export interface AdvisorsSectionData {
   partners_title_vi: string;
   partners_title_en: string;
   advisors: AdvisorItem[];
-  partners: { id: string; logo_url: string; name: string }[];
+  partners: string[]; // Đã đổi thành mảng string để fix lỗi 2322
 }
 
 // --- AGENDA SECTION ---
@@ -120,6 +120,13 @@ export interface AgendaSectionData {
 }
 
 // --- BOOTH MAP SECTION ---
+export interface BoothItem {
+  id: string;
+  label: string;
+  name_vi: string;
+  name_en: string;
+}
+
 export interface BoothArea {
   id: string;
   name_vi: string;
@@ -127,15 +134,16 @@ export interface BoothArea {
   description_vi: string;
   description_en: string;
   color_code: string;
+  booths: BoothItem[];
 }
 
 export interface BoothMapSectionData {
   title_vi: string;
   title_en: string;
-  subtitle_vi: string;
-  subtitle_en: string;
-  note_vi: string;
-  note_en: string;
+  subtitle_vi?: string;
+  subtitle_en?: string;
+  note_vi?: string;
+  note_en?: string;
   use_image: boolean;
   map_image_url?: string;
   areas: BoothArea[];
@@ -161,11 +169,46 @@ export interface ContactSectionData {
   desc_en: string;
   address_vi: string;
   address_en: string;
-  banner_image: string;
+  banner_image?: string;
+  map_embed_url?: string;
   contacts: ContactPerson[];
 }
 
-// --- SITE DATA WRAPPER ---
+// --- GUIDELINES SECTION ---
+export interface GuidelineItem {
+  id: string;
+  title_vi: string;
+  title_en: string;
+  content_vi: string;
+  content_en: string;
+}
+
+export interface BoothGuidelinesData {
+  title_vi: string;
+  title_en: string;
+  guidelines: GuidelineItem[];
+}
+
+// --- FOOTER SECTION ---
+export interface FooterSectionData {
+  logo_text: string;
+  logo_url?: string;
+  description_vi: string;
+  description_en: string;
+  facebook_url: string;
+  zalo_url: string;
+  email: string;
+  phone: string;
+  copyright_vi: string;
+  copyright_en: string;
+}
+export interface HeaderSectionData {
+  logo_url?: string;
+  logo_text: string;
+  register_text_vi: string;
+  register_text_en: string;
+}
+// --- SITE DATA WRAPPER (PHẢI TRỎ ĐÚNG FOOTER) ---
 export interface SiteData {
   hero: HeroSectionData;
   pillars: PillarsSectionData;
@@ -174,9 +217,7 @@ export interface SiteData {
   boothMap: BoothMapSectionData;
   agenda: AgendaSectionData;
   contact: ContactSectionData;
-  footer: {
-    copyright_vi: string;
-    copyright_en: string;
-    social_links: { platform: string; url: string }[];
-  };
+  footer: FooterSectionData; // Đã chỉnh sửa đồng bộ
+  boothGuidelines: BoothGuidelinesData;
+  header: HeaderSectionData;
 }

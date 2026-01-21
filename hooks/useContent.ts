@@ -32,5 +32,6 @@ export function useContent<T>() {
     fetchContent()
   }, [])
 
-  return { content, loading }
+  // BẮT BUỘC phải return thêm setContent ở đây
+  return { content, loading, setContent }
 }

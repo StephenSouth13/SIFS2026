@@ -1,159 +1,132 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Clock, Calendar, Zap, Trophy } from "lucide-react"
+import { motion } from "framer-motion"
+import { Map as MapIcon, Store, MousePointer2, Info, LayoutGrid } from "lucide-react"
+import { BoothMapSectionData, BoothArea, BoothItem } from "@/types/cms"
 
-interface AgendaSectionProps {
+interface BoothMapSectionProps {
   language: "vi" | "en"
+  data: BoothMapSectionData | undefined
 }
 
-const content = {
-  vi: {
-    title: "Chương Trình Sự Kiện",
-    subtitle: "Lịch trình chi tiết 2 ngày hội khởi nghiệp SIFS 2026",
-    days: [
-      {
-        date: "06/02/2026",
-        label: "Ngày 01: Khai Phá",
-        events: [
-          { time: "09:00 - 09:30", title: "Khai mạc sự kiện", description: "Lễ khai mạc trang trọng với sự tham gia của các cấp lãnh đạo và đối tác chiến lược.", icon: <Zap className="w-4 h-4" /> },
-          { time: "09:30 - 11:00", title: "Seminar 1: AI & Tự Động Hóa", description: "Tương lai của trí tuệ nhân tạo trong vận hành doanh nghiệp startup.", icon: <Clock className="w-4 h-4" /> },
-          { time: "11:00 - 18:00", title: "Trưng bày & Networking", description: "Không gian kết nối trực tiếp tại các gian hàng triển lãm Khu A, B, C, D, E.", icon: <Calendar className="w-4 h-4" /> },
-        ],
-      },
-      {
-        date: "07/02/2026",
-        label: "Ngày 02: Bứt Phá",
-        events: [
-          { time: "09:00 - 11:00", title: "Seminar 2: Nhân Sự Chất Lượng Cao", description: "Chiến lược thu hút và giữ chân nhân tài trong kỷ nguyên số.", icon: <Clock className="w-4 h-4" /> },
-          { time: "11:00 - 13:00", title: "Seminar 3: Sáng Tạo & Design Thinking", description: "Áp dụng tư duy thiết kế để đột phá mô hình kinh doanh.", icon: <Clock className="w-4 h-4" /> },
-          { time: "13:00 - 15:00", title: "Seminar 4: Huy Động Vốn & Đầu Tư", description: "Bí quyết chinh phục các quỹ đầu tư VCs và Angel Investors.", icon: <Clock className="w-4 h-4" /> },
-          { time: "15:30 - 18:00", title: 'Chạy bộ "Run for Future"', description: "Giải chạy thiện nguyện gây quỹ sinh viên khó khăn - Mục tiêu: 50 tỷ VND.", icon: <Trophy className="w-4 h-4" /> },
-        ],
-      },
-    ],
-  },
-  en: {
-    title: "Event Agenda",
-    subtitle: "Detailed 2-day schedule of SIFS 2026 Innovation Festival",
-    days: [
-      {
-        date: "06/02/2026",
-        label: "Day 01: Discovery",
-        events: [
-          { time: "09:00 - 09:30", title: "Opening Ceremony", description: "Grand opening with leaders and strategic partners.", icon: <Zap className="w-4 h-4" /> },
-          { time: "09:30 - 11:00", title: "Seminar 1: AI & Automation", description: "The future of AI in startup operations.", icon: <Clock className="w-4 h-4" /> },
-          { time: "11:00 - 18:00", title: "Showcase & Networking", description: "Direct networking at exhibition booths in Zones A, B, C, D, E.", icon: <Calendar className="w-4 h-4" /> },
-        ],
-      },
-      {
-        date: "07/02/2026",
-        label: "Day 02: Breakthrough",
-        events: [
-          { time: "09:00 - 11:00", title: "Seminar 2: High-Quality HR", description: "Attracting and retaining talent in the digital age.", icon: <Clock className="w-4 h-4" /> },
-          { time: "11:00 - 13:00", title: "Seminar 3: Design Thinking", description: "Applying design thinking for business breakthroughs.", icon: <Clock className="w-4 h-4" /> },
-          { time: "13:00 - 15:00", title: "Seminar 4: Fundraising & Investment", description: "Secrets to winning over VCs and Angel Investors.", icon: <Clock className="w-4 h-4" /> },
-          { time: "15:30 - 18:00", title: '"Run for Future" Charity Run', description: "Fundraising run for students in need - Target: 50 billion VND.", icon: <Trophy className="w-4 h-4" /> },
-        ],
-      },
-    ],
-  },
-}
+export default function BoothMapSection({ language, data }: BoothMapSectionProps) {
+  if (!data || !data.areas) return null
 
-export default function AgendaSection({ language }: AgendaSectionProps) {
-  const t = content[language]
-  const [activeDay, setActiveDay] = useState(0)
+  const t = {
+    title: language === "vi" ? data.title_vi : data.title_en,
+    instruction: language === "vi" ? "Tra cứu vị trí gian hàng chi tiết bên dưới" : "Find detailed booth locations below",
+    boothCount: language === "vi" ? "gian hàng" : "booths",
+    empty: language === "vi" ? "Đang cập nhật danh sách..." : "Updating list..."
+  }
 
   return (
-    <section id="agenda" className="py-24 px-4 bg-[#050505] relative overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-80 h-80 bg-secondary/5 rounded-full blur-[100px] pointer-events-none" />
+    <section id="booth-map" className="py-24 px-4 bg-[#050505] relative overflow-hidden font-sans scroll-mt-20">
+      {/* Glow Decor */}
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-7xl font-black mb-4 text-white font-serif italic uppercase tracking-tighter">
+          <h2 className="text-4xl md:text-8xl font-black text-white font-serif italic uppercase tracking-tighter mb-6 neon-text">
             {t.title}
           </h2>
-          <p className="text-gray-400 italic">{t.subtitle}</p>
+          <div className="flex items-center justify-center gap-3 text-gray-400 italic">
+            <LayoutGrid size={16} className="text-primary" />
+            <p className="text-sm md:text-lg uppercase tracking-widest font-bold">{t.instruction}</p>
+          </div>
         </motion.div>
 
-        {/* Date Tabs */}
-        <div className="flex gap-4 justify-center mb-16">
-          {t.days.map((day, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveDay(index)}
-              className={`relative px-8 py-4 rounded-2xl transition-all duration-500 overflow-hidden group ${
-                activeDay === index ? "text-white" : "text-gray-500 hover:text-gray-300"
-              }`}
-            >
-              <div className="relative z-10">
-                <p className="text-[10px] font-black uppercase tracking-widest mb-1">{day.label}</p>
-                <p className="text-lg font-bold">{day.date}</p>
-              </div>
-              {activeDay === index && (
-                <motion.div 
-                  layoutId="activeTab" 
-                  className="absolute inset-0 bg-primary shadow-[0_0_30px_rgba(220,20,60,0.4)]"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* BÊN TRÁI: MASTER MAP (Sticky) */}
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="lg:col-span-7 lg:sticky lg:top-32"
+          >
+            <div className="group relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-white/5 p-3 backdrop-blur-xl shadow-2xl transition-all duration-500 hover:border-primary/30">
+              <div className="relative overflow-hidden rounded-[1.8rem]">
+                <img 
+                  src={data.map_image_url || "/placeholder-map.png"} 
+                  alt="SIFS 2026 Floor Plan" 
+                  className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
-              )}
-            </button>
-          ))}
-        </div>
+              </div>
+              
+              <div className="absolute bottom-8 left-8 flex items-center gap-3 bg-black/60 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10">
+                <MapIcon className="text-primary" size={20} />
+                <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Live Floor Plan</span>
+              </div>
+            </div>
+          </motion.div>
 
-        {/* Timeline Content */}
-        <div className="relative border-l border-white/10 ml-4 md:ml-8 pl-8 md:pl-12 space-y-12">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeDay}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.4 }}
-            >
-              {t.days[activeDay].events.map((event, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="relative mb-12 last:mb-0"
-                >
-                  {/* Timeline Dot */}
-                  <div className="absolute -left-[41px] md:-left-[57px] top-0 w-4 h-4 rounded-full bg-secondary shadow-[0_0_15px_rgba(255,215,0,0.5)] border-4 border-[#050505] z-10" />
-                  
-                  <div className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-[2rem] p-6 md:p-8 transition-all duration-500 group">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-secondary/10 rounded-lg text-secondary">
-                          {event.icon}
-                        </div>
-                        <span className="text-secondary font-black text-sm tracking-widest uppercase">
-                          {event.time}
-                        </span>
-                      </div>
-                      <div className="h-[1px] flex-1 bg-white/5 hidden md:block" />
+          {/* BÊN PHẢI: CHI TIẾT XỔ SẴN (Scrollable) */}
+          <div className="lg:col-span-5 space-y-10 max-h-[800px] overflow-y-auto pr-4 custom-scrollbar pb-10">
+            {data.areas.map((zone: BoothArea, index: number) => {
+              const zoneName = language === "vi" ? zone.name_vi : zone.name_en
+              const zoneDesc = language === "vi" ? zone.description_vi : zone.description_en
+
+              return (
+                <div key={zone.id} className="relative group/zone">
+                  {/* Header Zone (Tĩnh - Không bấm) */}
+                  <div className="flex items-center gap-5 mb-6">
+                    <div 
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl italic shadow-lg shrink-0"
+                      style={{ backgroundColor: `${zone.color_code}20`, color: zone.color_code, border: `1px solid ${zone.color_code}40` }}
+                    >
+                      {index + 1}
                     </div>
-                    
-                    <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight mb-3 group-hover:text-primary transition-colors">
-                      {event.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm md:text-base leading-relaxed italic">
-                      {event.description}
-                    </p>
+                    <div>
+                      <h3 className="text-xl font-black text-white uppercase tracking-tight group-hover/zone:text-primary transition-colors">
+                        {zoneName}
+                      </h3>
+                      <p className="text-[10px] text-primary font-black uppercase tracking-widest mt-1">
+                        {zone.booths?.length || 0} {t.boothCount}
+                      </p>
+                    </div>
                   </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+
+                  {/* Nội dung xổ sẵn */}
+                  <div className="p-8 bg-white/[0.03] rounded-[2.5rem] border border-white/5 space-y-6 shadow-xl">
+                    {/* Mô tả khu vực */}
+                    {zoneDesc && (
+                      <div className="flex gap-4 items-start pb-4 border-b border-white/5">
+                        <Info size={16} className="text-primary shrink-0 mt-1" />
+                        <p className="text-gray-400 text-[13px] italic leading-relaxed">{zoneDesc}</p>
+                      </div>
+                    )}
+
+                    {/* Danh sách gian hàng con hiển thị trực tiếp */}
+                    <div className="grid grid-cols-1 gap-3">
+                      {zone.booths && zone.booths.length > 0 ? (
+                        zone.booths.map((booth: BoothItem) => (
+                          <div key={booth.id} className="flex items-center justify-between p-4 bg-white/[0.03] rounded-2xl border border-white/5 group/booth hover:bg-primary/10 hover:border-primary/20 transition-all">
+                            <div className="flex items-center gap-4">
+                              <span className="w-10 h-10 flex items-center justify-center bg-black/40 rounded-xl text-[10px] font-black text-primary border border-primary/20 group-hover/booth:bg-primary group-hover/booth:text-white transition-all">
+                                {booth.label}
+                              </span>
+                              <span className="text-[13px] font-bold text-gray-300 group-hover/booth:text-white">
+                                {language === "vi" ? booth.name_vi : booth.name_en}
+                              </span>
+                            </div>
+                            <Store size={14} className="text-gray-600 group-hover/booth:text-primary transition-colors" />
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-center text-[10px] text-gray-600 uppercase font-black py-4">{t.empty}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     </section>

@@ -1,109 +1,125 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Facebook, Instagram, Linkedin, Mail, Phone } from "lucide-react"
+import { Facebook, MessageSquare, Mail, Phone, Zap } from "lucide-react"
+import { FooterSectionData } from "@/types/cms"
 
 interface FooterProps {
   language: "vi" | "en"
+  data: FooterSectionData | undefined
 }
 
-const content = {
-  vi: {
-    quickLinks: "Liên kết nhanh",
-    contact: "Liên hệ",
-    followUs: "Theo dõi chúng tôi",
-    copyright: "© 2026 SIFS - Ngày Hội Khởi Nghiệp & Đổi Mới Sáng Tạo",
-    organizedBy: "Được tổ chức bởi Startup & Innovation Hub HCMC (SIHUB)",
-    links: ["Trang Chủ", "Chương Trình", "Gian Hàng", "Liên Hệ"],
-  },
-  en: {
-    quickLinks: "Quick Links",
-    contact: "Contact",
-    followUs: "Follow Us",
-    copyright: "© 2026 SIFS - Spring Innovation Festival Summit",
-    organizedBy: "Organized by Startup & Innovation Hub HCMC (SIHUB)",
-    links: ["Home", "Agenda", "Sponsors", "Contact"],
-  },
-}
+export default function Footer({ language, data }: FooterProps) {
+  if (!data) return null;
 
-export default function Footer({ language }: FooterProps) {
-  const t = content[language]
+  const t = {
+    quickLinks: language === "vi" ? "Khám phá" : "Explore",
+    contact: language === "vi" ? "Kết nối" : "Contact",
+    nav: language === "vi" 
+      ? [
+          { label: "Trang Chủ", id: "home" },
+          { label: "Chương Trình", id: "agenda" },
+          { label: "Gian Hàng", id: "booth-map" },
+          { label: "Liên Hệ", id: "contact" }
+        ] 
+      : [
+          { label: "Home", id: "home" },
+          { label: "Agenda", id: "agenda" },
+          { label: "Booths", id: "booth-map" },
+          { label: "Contact", id: "contact" }
+        ]
+  }
 
   return (
-    <footer className="bg-slate-900 text-white pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          {/* Brand */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="md:col-span-1">
-            <h3 className="text-2xl font-bold text-secondary mb-2">SIFS 2026</h3>
-            <p className="text-gray-300 text-sm">{t.organizedBy}</p>
-          </motion.div>
+    <footer className="bg-[#050505] pt-32 pb-16 px-6 border-t border-white/[0.03] relative overflow-hidden font-sans">
+      {/* Subtle Glow - Điểm nhấn ánh sáng nhẹ phía dưới */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-primary/[0.03] blur-[150px] rounded-full pointer-events-none" />
 
-          {/* Quick Links */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <h4 className="font-bold text-secondary mb-4">{t.quickLinks}</h4>
-            <ul className="space-y-2">
-              {t.links.map((link, index) => (
-                <li key={index}>
-                  <a href="#" className="text-gray-300 hover:text-secondary transition-colors text-sm">
-                    {link}
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-20 mb-24">
+          
+          {/* CỘT 1: BRAND IDENTITY */}
+          <div className="md:col-span-6 space-y-10">
+            <div className="flex items-center gap-5">
+              {data.logo_url ? (
+                <img src={data.logo_url} alt="SIFS" className="h-16 w-auto object-contain brightness-110" />
+              ) : (
+                <div className="w-14 h-14 bg-primary rounded-[1.25rem] flex items-center justify-center shadow-2xl shadow-primary/20">
+                  <Zap className="text-white fill-white" size={28} />
+                </div>
+              )}
+              {data.logo_text && (
+                <span className="text-4xl font-black text-white italic tracking-tighter font-serif uppercase">
+                  {data.logo_text}
+                </span>
+              )}
+            </div>
+
+            {(language === "vi" ? data.description_vi : data.description_en) && (
+              <p className="text-gray-400 text-lg leading-relaxed max-w-md font-medium italic opacity-80">
+                {language === "vi" ? data.description_vi : data.description_en}
+              </p>
+            )}
+
+            {/* SOCIAL ICONS - TINH TẾ HƠN */}
+            <div className="flex gap-5 pt-4">
+              {data.facebook_url && (
+                <a href={data.facebook_url} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-gray-400 hover:text-white hover:bg-primary hover:border-primary transition-all duration-500 shadow-xl">
+                  <Facebook size={22} fill="currentColor" />
+                </a>
+              )}
+              {data.zalo_url && (
+                <a href={data.zalo_url} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-gray-400 hover:text-white hover:bg-teal-600 hover:border-teal-600 transition-all duration-500 shadow-xl">
+                  <MessageSquare size={22} fill="currentColor" />
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* CỘT 2: NAVIGATION */}
+          <div className="md:col-span-3 space-y-8">
+            <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] opacity-30">{t.quickLinks}</h4>
+            <ul className="space-y-5">
+              {t.nav.map((link, i) => (
+                <li key={i}>
+                  <a href={`#${link.id}`} className="text-sm font-bold text-gray-500 uppercase tracking-[0.2em] hover:text-primary transition-all flex items-center gap-3 group">
+                    <span className="w-0 h-px bg-primary group-hover:w-6 transition-all duration-500" />
+                    {link.label}
                   </a>
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
-          {/* Contact Info */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <h4 className="font-bold text-secondary mb-4">{t.contact}</h4>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-2 text-gray-300">
-                <Mail size={16} />
-                <a href="mailto:info@sifs2026.com" className="hover:text-secondary transition-colors">
-                  info@sifs2026.com
+          {/* CỘT 3: CONTACT INFO */}
+          <div className="md:col-span-3 space-y-8">
+            <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] opacity-30">{t.contact}</h4>
+            <div className="space-y-6">
+              {data.email && (
+                <a href={`mailto:${data.email}`} className="block group">
+                  <p className="text-[10px] font-black text-gray-600 uppercase mb-1 tracking-widest group-hover:text-primary transition-colors">Email Support</p>
+                  <p className="text-base font-bold text-gray-300 flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                    {data.email}
+                  </p>
                 </a>
-              </div>
-              <div className="flex items-center gap-2 text-gray-300">
-                <Phone size={16} />
-                <a href="tel:+84868158269" className="hover:text-secondary transition-colors">
-                  +84 86 8158 269
+              )}
+              {data.phone && (
+                <a href={`tel:${data.phone}`} className="block group">
+                  <p className="text-[10px] font-black text-gray-600 uppercase mb-1 tracking-widest group-hover:text-primary transition-colors">Hotline 24/7</p>
+                  <p className="text-base font-bold text-gray-300 flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                    {data.phone}
+                  </p>
                 </a>
-              </div>
+              )}
             </div>
-          </motion.div>
-
-          {/* Social Links */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <h4 className="font-bold text-secondary mb-4">{t.followUs}</h4>
-            <div className="flex gap-4">
-              {[
-                { icon: Facebook, href: "#" },
-                { icon: Instagram, href: "#" },
-                { icon: Linkedin, href: "#" },
-              ].map((social, index) => (
-                <motion.a
-                  key={index}
-                  href={social.href}
-                  whileHover={{ scale: 1.2, color: "#FFD700" }}
-                  className="text-gray-400 hover:text-secondary transition-colors"
-                >
-                  <social.icon size={20} />
-                </motion.a>
-              ))}
-            </div>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-gray-700 pt-8">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="text-center text-gray-400 text-sm"
-          >
-            <p>{t.copyright}</p>
-          </motion.div>
+        {/* BOTTOM: CHỈ GIỮ LẠI COPYRIGHT - SẠCH SẼ TUYỆT ĐỐI */}
+        <div className="pt-12 border-t border-white/[0.03] flex justify-center">
+          <p className="text-[10px] font-black text-gray-700 uppercase tracking-[0.5em] text-center">
+            {language === "vi" ? data.copyright_vi : data.copyright_en}
+          </p>
         </div>
       </div>
     </footer>

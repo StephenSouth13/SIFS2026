@@ -1,160 +1,110 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Menu, X } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Menu, X, Zap, ArrowRight } from "lucide-react"
+import { HeaderSectionData } from "@/types/cms"
 
 interface HeaderProps {
   language: "vi" | "en"
   onLanguageChange: (lang: "vi" | "en") => void
+  data: HeaderSectionData | undefined
 }
 
-const content = {
-  vi: {
-    nav: [
-      { label: "Trang Chủ", id: "home" },
-      { label: "Chương Trình", id: "agenda" },
-      { label: "Ban Cố Vấn", id: "advisors" },
-     
-      { label: "Gian Hàng", id: "booth" },
-    ],
-    register: "Đăng ký",
-  },
-  en: {
-    nav: [
-      { label: "Home", id: "home" },
-      { label: "Agenda", id: "agenda" },
-      { label: "Advisors", id: "advisors" },
-      
-      { label: "Booths", id: "booth" },
-    ],
-    register: "Register",
-  },
-}
-
-const scrollToSection = (sectionId: string) => {
-  const element = document.getElementById(sectionId)
-  if (element) {
-    element.scrollIntoView({ behavior: "smooth" })
-  }
-}
-
-export default function Header({ language, onLanguageChange }: HeaderProps) {
+export default function Header({ language, onLanguageChange, data }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const t = content[language]
 
+  // CHUYỂN HOOK LÊN TRƯỚC LỆNH RETURN ĐIỀU KIỆN
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 20)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // NẾU KHÔNG CÓ DATA, CHỈ RETURN NULL SAU KHI CÁC HOOK ĐÃ ĐƯỢC KHAI BÁO
+  if (!data) return null;
+
+  const nav = language === "vi" 
+    ? [
+        { label: "Trang Chủ", id: "home" },
+        { label: "Chương Trình", id: "agenda" },
+        { label: "Gian Hàng", id: "booth-map" },
+        { label: "Liên Hệ", id: "contact" },
+      ]
+    : [
+        { label: "Home", id: "home" },
+        { label: "Agenda", id: "agenda" },
+        { label: "Booth Map", id: "booth-map" },
+        { label: "Contact", id: "contact" },
+      ];
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      window.scrollTo({ top: element.offsetTop - 100, behavior: "smooth" })
+      setIsOpen(false)
+    }
+  }
+
   return (
     <motion.header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? "glass neon-glow-gold" : "bg-gradient-to-b from-orange-100/80 to-transparent"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className={`fixed top-0 w-full z-[100] transition-all duration-700 font-sans ${
+        isScrolled 
+        ? "py-4 bg-black/70 backdrop-blur-2xl border-b border-white/[0.08]" 
+        : "py-8 bg-transparent"
       }`}
-      style={{
-        borderBottom: isScrolled ? "2px solid #FFD700" : "none",
-        backdropFilter: isScrolled ? "blur(16px)" : "none",
-      }}
     >
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          onClick={() => scrollToSection("home")}
-          className="font-bold text-2xl text-primary cursor-pointer"
-        >
-          SIFS 2026
-        </motion.div>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          {t.nav.map((item, index) => (
-            <motion.button
-              key={index}
-              onClick={() => scrollToSection(item.id)}
-              whileHover={{ color: "#DC143C" }}
-              className="text-foreground font-medium transition-colors cursor-pointer border-none bg-none"
-            >
-              {item.label}
-            </motion.button>
-          ))}
-        </nav>
-
-        {/* Right Section */}
-        <div className="hidden md:flex items-center gap-4">
-          {/* Language Toggle */}
-          <div className="flex gap-2 bg-white/30 rounded-lg p-1">
-            {["vi", "en"].map((lang) => (
-              <button
-                key={lang}
-                onClick={() => onLanguageChange(lang as "vi" | "en")}
-                className={`px-3 py-1 rounded text-sm font-semibold transition-all ${
-                  language === lang ? "bg-primary text-white" : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                {lang.toUpperCase()}
-              </button>
-            ))}
-          </div>
-
-          {/* Register Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary/80 neon-glow transition-all"
-          >
-            {t.register}
-          </motion.button>
+      <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
+        {/* LOGO CMS */}
+        <div onClick={() => scrollToSection("home")} className="flex items-center gap-4 cursor-pointer group">
+          {data.logo_url ? (
+            <img src={data.logo_url} className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105" alt="Logo" />
+          ) : (
+            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+              <Zap className="text-white fill-white" size={24} />
+            </div>
+          )}
+          {data.logo_text && (
+            <span className="text-2xl md:text-3xl font-black text-white italic tracking-tighter font-serif uppercase">
+              {data.logo_text}
+            </span>
+          )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-foreground">
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        {/* NAVIGATION & BUTTONS (Giữ nguyên logic của bạn) */}
+        <nav className="hidden lg:flex items-center gap-12 text-gray-300 text-sm font-bold uppercase tracking-[0.2em]">
+           {nav.map((item, index) => (
+             <button key={index} onClick={() => scrollToSection(item.id)} className="hover:text-primary transition-all relative group italic">
+               {item.label}
+               <span className="absolute -bottom-2 left-0 w-0 h-1 bg-primary rounded-full transition-all group-hover:w-full" />
+             </button>
+           ))}
+        </nav>
+
+        <div className="hidden lg:flex items-center gap-8">
+           <div className="flex items-center gap-2 bg-white/[0.05] border border-white/10 rounded-2xl p-1">
+             {["vi", "en"].map((l) => (
+               <button key={l} onClick={() => onLanguageChange(l as "vi" | "en")}
+                 className={`px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
+                   language === l ? "bg-primary text-white shadow-lg" : "text-gray-500 hover:text-white"
+                 }`}>
+                 {l}
+               </button>
+             ))}
+           </div>
+           <button onClick={() => scrollToSection("contact")} className="px-10 py-4 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-xl hover:scale-105 transition-all flex items-center gap-2 italic">
+             {language === "vi" ? data.register_text_vi : data.register_text_en}
+             <ArrowRight size={16} />
+           </button>
+        </div>
+
+        <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden text-white p-2">
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
-
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden glass border-t border-border"
-        >
-          <div className="px-4 py-4 space-y-4">
-            {t.nav.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  scrollToSection(item.id)
-                  setIsOpen(false)
-                }}
-                className="block w-full text-left text-foreground hover:text-primary transition-colors border-none bg-none cursor-pointer"
-              >
-                {item.label}
-              </button>
-            ))}
-            <div className="flex gap-2 pt-4 border-t border-border">
-              {["vi", "en"].map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => onLanguageChange(lang as "vi" | "en")}
-                  className={`flex-1 py-2 rounded text-sm font-semibold transition-all ${
-                    language === lang ? "bg-primary text-white" : "bg-gray-200 text-gray-600"
-                  }`}
-                >
-                  {lang.toUpperCase()}
-                </button>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      )}
     </motion.header>
   )
 }

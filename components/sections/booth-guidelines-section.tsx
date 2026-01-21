@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, AlertCircle, Sparkles, Globe } from "lucide-react"
 
 interface BoothGuidelinesProps {
   language: "vi" | "en"
@@ -12,43 +12,19 @@ const content = {
   vi: {
     title: "Quy Định Gian Hàng",
     guidelines: [
-      {
-        title: "Giá Gian Hàng Early Bird",
-        content: "2.000.000 VND (Thời gian: Đến 30/01/2026)",
-      },
-      {
-        title: "Diện Tích & Tiêu Chuẩn Gian Hàng",
-        content: "1.5m x 0.5m bao gồm: Một bàn, 2 ghế, 1 ổ cắm điện, Chiếu sáng chuẩn",
-      },
-      {
-        title: "Thời gian Setup",
-        content: "14:00 - 21:00 ngày 05/02/2026. Vui lòng đến đúng giờ để setup gian hàng.",
-      },
-      {
-        title: "Chính sách hủy",
-        content: "Nếu hủy trước 30/01/2026 sẽ hoàn lại 50% chi phí. Hủy sau thời hạn không hoàn lại chi phí.",
-      },
+      { title: "Giá Early Bird", content: "2.000.000 VND (Đến 30/01/2026)" },
+      { title: "Tiêu chuẩn", content: "1.5m x 0.5m bao gồm: 1 bàn, 2 ghế, 1 ổ cắm." },
+      { title: "Khu E (Global Partners)", content: "Hỗ trợ riêng cho đối tác quốc tế 24/7." },
+      { title: "Setup", content: "14:00 - 21:00 ngày 05/02/2026." },
     ],
   },
   en: {
     title: "Booth Guidelines",
     guidelines: [
-      {
-        title: "Early Bird Booth Price",
-        content: "2,000,000 VND (Valid until 30/01/2026)",
-      },
-      {
-        title: "Booth Size & Standard Equipment",
-        content: "1.5m x 0.5m including: One table, 2 chairs, 1 power outlet, Standard lighting",
-      },
-      {
-        title: "Setup Time",
-        content: "14:00 - 21:00 on 05/02/2026. Please arrive on time for booth setup.",
-      },
-      {
-        title: "Cancellation Policy",
-        content: "Cancellation before 30/01/2026 receives 50% refund. No refunds after deadline.",
-      },
+      { title: "Early Bird Price", content: "2,000,000 VND (Until Jan 30, 2026)" },
+      { title: "Standard", content: "1.5m x 0.5m: 1 table, 2 chairs, 1 outlet." },
+      { title: "Zone E", content: "Special support for global partners 24/7." },
+      { title: "Setup", content: "14:00 - 21:00 Feb 05, 2026." },
     ],
   },
 }
@@ -58,52 +34,24 @@ export default function BoothGuidelinesSection({ language }: BoothGuidelinesProp
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="py-20 px-4">
+    <section className="py-24 px-4 bg-[#050505]">
       <div className="max-w-3xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold text-center mb-12 neon-text font-serif"
-        >
-          {t.title}
-        </motion.h2>
-
+        <h2 className="text-4xl md:text-6xl font-black text-center mb-16 text-white font-serif italic uppercase tracking-tighter">{t.title}</h2>
         <div className="space-y-4">
-          {t.guidelines.map((guideline, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full glass rounded-lg p-6 flex items-center justify-between glass-hover text-left"
-              >
-                <h3 className="text-lg font-bold text-foreground">{guideline.title}</h3>
-                <motion.div animate={{ rotate: openIndex === index ? 180 : 0 }} transition={{ duration: 0.3 }}>
-                  <ChevronDown className="w-5 h-5 text-secondary" />
-                </motion.div>
+          {t.guidelines.map((g, i) => (
+            <div key={i} className="border-b border-white/10">
+              <button onClick={() => setOpenIndex(openIndex === i ? null : i)} className="w-full py-6 flex justify-between items-center text-white font-bold uppercase text-left">
+                <span>{g.title}</span>
+                <ChevronDown className={`transition-transform ${openIndex === i ? "rotate-180" : ""}`} />
               </button>
-
               <AnimatePresence>
-                {openIndex === index && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="glass rounded-b-lg p-6 pt-0 text-muted-foreground border-t border-border">
-                      {guideline.content}
-                    </div>
+                {openIndex === i && (
+                  <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden">
+                    <p className="pb-6 text-gray-400 italic text-sm">{g.content}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

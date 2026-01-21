@@ -4,7 +4,7 @@ import { Montserrat, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
-// Montserrat cho nội dung - Hiện đại, dễ đọc, hỗ trợ tiếng Việt
+// Montserrat cho toàn bộ nội dung (Set làm default font-sans)
 const montserrat = Montserrat({
   subsets: ["latin", "vietnamese"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -12,7 +12,7 @@ const montserrat = Montserrat({
   display: "swap",
 })
 
-// Playfair Display cho Tiêu đề - Đẳng cấp, nghệ thuật
+// Playfair Display cho các tiêu đề nghệ thuật
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600", "700", "900"],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   title: "SIFS 2026 - Startup & Innovation Festival",
   description: "Ngày hội khởi nghiệp & đổi mới sáng tạo mùa xuân 2026 tại SIHUB. Nơi hội tụ các tài năng và ý tưởng đột phá.",
   generator: "quachthanhlong",
-  metadataBase: new URL("https://sifs2026.vn"), // Thay bằng domain thật của bạn
+  metadataBase: new URL("https://sifs2026.vn"),
   icons: {
     icon: "/icon.svg",
     apple: "/apple-icon.png",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "SIFS 2026 - Startup & Innovation Festival",
     description: "Hành trình đổi mới sáng tạo mùa xuân 2026",
-    images: ["/og-image.jpg"], // Hình ảnh khi share link
+    images: ["/og-image.jpg"],
   },
 }
 
@@ -46,12 +46,14 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${playfair.variable} font-sans antialiased bg-[#050505] text-white selection:bg-red-600/30`}
       >
-        {/* Background Layer: Tạo chiều sâu huyền bí cho sự kiện */}
+        {/* Background Layer: Neon Ambient */}
         <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,#4a0000_0%,#050505_75%)]" />
-          {/* Các đốm sáng trang trí (Ambient Lights) */}
-          <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] bg-red-600/5 blur-[120px] rounded-full animate-pulse" />
-          <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-yellow-600/5 blur-[100px] rounded-full" />
+          {/* Radial Gradient nền */}
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_-20%,#4a0000_0%,#050505_80%)]" />
+          
+          {/* Ambient Lights - Đốm sáng chuyển động */}
+          <div className="absolute top-[10%] left-[-10%] w-[600px] h-[600px] bg-red-600/10 blur-[150px] rounded-full animate-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-yellow-500/5 blur-[120px] rounded-full" />
         </div>
         
         <main>{children}</main>
