@@ -1,107 +1,108 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* --- THEME SÁNG (NỀN TRẮNG - CHỮ ĐEN) --- */
-  --background: 0 0% 100%;    /* Trắng tinh khôi #ffffff */
-  --foreground: 0 0% 10%;     /* Đen sâu #1a1a1a */
+  /* --- SIÊU TRẮNG: FIX LỖI BUILD & MÀU SẮC --- */
+  --background: #ffffff;
+  --foreground: #0f172a; /* Màu Slate-900 sang trọng */
   
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 10%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 10%;
+  --primary: #DC143C;    /* Đỏ Crimson đặc trưng SIFS */
+  --primary-foreground: #ffffff;
+  
+  --secondary: #FFD700;  /* Vàng Gold */
+  --secondary-foreground: #000000;
 
-  /* Màu đỏ SIFS làm điểm nhấn (Primary) */
-  --primary: 359 69% 33%;    /* Đỏ SIFS #8d1a1b */
-  --primary-foreground: 0 0% 100%;
+  --accent: #FFD700;
+  --accent-foreground: #ffffff;
 
-  --secondary: 45 100% 50%;   /* Vàng Gold điểm xuyết */
-  --secondary-foreground: 0 0% 10%;
-
-  --muted: 210 20% 96%;
-  --muted-foreground: 215 16% 47%;
-
-  --accent: 359 69% 33%;
-  --accent-foreground: 0 0% 100%;
-
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 359 69% 33%;
+  --border: #f1f5f9;     /* Slate-100 */
+  --input: #f1f5f9;
+  --ring: #DC143C;
   --radius: 1rem;
 }
 
+/* Ép tất cả về trắng kể cả khi máy khách để Dark Mode (vì bạn muốn White Theme) */
+.dark {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --border: #f1f5f9;
+  --input: #f1f5f9;
+  --ring: #DC143C;
+}
+
 @theme inline {
-  --font-sans: "Montserrat", sans-serif;
-  --font-serif: "Playfair Display", serif;
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui;
+  --font-serif: var(--font-playfair), ui-serif, Georgia;
   
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-primary: hsl(var(--primary));
-  --color-secondary: hsl(var(--secondary));
-  --color-border: hsl(var(--border));
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring); /* Khai báo để dùng được @apply outline-ring */
+  
+  --radius-xl: 2rem;
+  --radius-2xl: 2.5rem;
+  --radius-3xl: 3rem;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 selection:bg-primary/10 selection:text-primary;
+    /* FIX LỖI BUILD: Bỏ hậu tố /50 ở outline-ring */
+    @apply border-border outline-ring;
   }
+  
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    /* Ép dùng Montserrat và màu nền trắng tuyệt đối */
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    @apply font-sans antialiased;
+    font-feature-settings: "cv11", "ss01";
   }
-  h1, h2, h3, h4 {
-    @apply font-serif text-foreground tracking-tighter;
+  
+  h1, h2, h3, h4, .font-serif {
+    @apply font-serif;
   }
 }
 
-/* Starfield cho bản Sáng - Hiệu ứng tinh vân xám nhẹ */
-.starfield {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: radial-gradient(
-    circle at 50% -20%,
-    rgba(248, 250, 252, 1) 0%,
-    rgba(255, 255, 255, 1) 100%
-  );
+/* --- HIỆU ỨNG NỀN TRẮNG SANG TRỌNG --- */
+
+/* Neon Text cho bản sáng: Đổ bóng mờ mịn */
+.neon-text {
+  text-shadow: 0 10px 20px rgba(220, 20, 60, 0.15), 0 0 1px rgba(220, 20, 60, 0.1);
 }
 
-.star {
-  position: absolute;
-  /* Hạt bụi màu xám mờ ảo */
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-  border-radius: 50%;
-  animation: shimmer 4s ease-in-out infinite, float-particles 10s ease-in-out infinite;
+/* Scrollbar bản Trắng: Không còn màu đen #050505 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc; /* Màu trắng xám cực nhẹ */
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0; /* Màu xám Slate nhạt */
+  border-radius: 20px;
+  border: 2px solid #f8fafc;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #DC143C; /* Chuyển đỏ khi hover cho xịn */
 }
 
-/* Glassmorphism cho nền Trắng */
+/* Glassmorphism cho nền Trắng: Sạch và trong suốt */
 .glass {
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px) saturate(180%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
 }
 
-.glass-hover:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(141, 26, 27, 0.1);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
-}
-
-/* Neon Text tinh tế - Không chói lòa */
-.neon-text {
-  color: #1a1a1a;
-  text-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05);
-}
-
-@keyframes float-particles {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(15px, -20px); }
-}
-
-@keyframes shimmer {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.6; }
+/* Hiệu ứng trôi hạt bụi cho bản Trắng */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% -20%, #f1f5f9 0%, #ffffff 100%);
 }

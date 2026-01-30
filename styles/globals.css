@@ -4,46 +4,35 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* SIFS Light Theme - Gold & Red Base */
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.15 0 0);
+  /* --- SIÊU TRẮNG: FIX LỖI BUILD & MÀU SẮC --- */
+  --background: #ffffff;
+  --foreground: #0f172a; /* Màu Slate-900 sang trọng */
   
-  --primary: #DC143C; /* Crimson Red */
+  --primary: #DC143C;    /* Đỏ Crimson đặc trưng SIFS */
   --primary-foreground: #ffffff;
   
-  --secondary: #FFD700; /* Gold */
+  --secondary: #FFD700;  /* Vàng Gold */
   --secondary-foreground: #000000;
 
   --accent: #FFD700;
   --accent-foreground: #ffffff;
 
-  --border: oklch(0.92 0 0);
-  --input: oklch(0.92 0 0);
+  --border: #f1f5f9;     /* Slate-100 */
+  --input: #f1f5f9;
   --ring: #DC143C;
   --radius: 1rem;
 }
 
+/* Ép tất cả về trắng kể cả khi máy khách để Dark Mode (vì bạn muốn White Theme) */
 .dark {
-  /* SIFS Dark Theme - Deep Space & Neon */
-  --background: #050505;
-  --foreground: #ffffff;
-  
-  --card: #0a0a0a;
-  --card-foreground: #ffffff;
-  
-  --primary: #DC143C;
-  --primary-foreground: #ffffff;
-  
-  --secondary: #FFD700;
-  --secondary-foreground: #000000;
-
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.05);
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --border: #f1f5f9;
+  --input: #f1f5f9;
   --ring: #DC143C;
 }
 
 @theme inline {
-  /* Gán font Montserrat vào sans */
   --font-sans: var(--font-montserrat), ui-sans-serif, system-ui;
   --font-serif: var(--font-playfair), ui-serif, Georgia;
   
@@ -51,6 +40,8 @@
   --color-secondary: var(--secondary);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring); /* Khai báo để dùng được @apply outline-ring */
   
   --radius-xl: 2rem;
   --radius-2xl: 2.5rem;
@@ -59,38 +50,59 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    /* FIX LỖI BUILD: Bỏ hậu tố /50 ở outline-ring */
+    @apply border-border outline-ring;
   }
+  
   body {
-    @apply bg-background text-foreground font-sans; /* Ép dùng Montserrat */
+    /* Ép dùng Montserrat và màu nền trắng tuyệt đối */
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    @apply font-sans antialiased;
     font-feature-settings: "cv11", "ss01";
   }
   
-  /* Hiệu ứng chữ Neon đặc trưng */
-  .neon-text {
-    text-shadow: 0 0 10px rgba(220, 20, 60, 0.5), 0 0 20px rgba(220, 20, 60, 0.3);
-  }
-
-  /* Custom Scrollbar cho đẹp */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #050505;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #222;
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #DC143C;
+  h1, h2, h3, h4, .font-serif {
+    @apply font-serif;
   }
 }
 
-/* Glassmorphism Utility */
+/* --- HIỆU ỨNG NỀN TRẮNG SANG TRỌNG --- */
+
+/* Neon Text cho bản sáng: Đổ bóng mờ mịn */
+.neon-text {
+  text-shadow: 0 10px 20px rgba(220, 20, 60, 0.15), 0 0 1px rgba(220, 20, 60, 0.1);
+}
+
+/* Scrollbar bản Trắng: Không còn màu đen #050505 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc; /* Màu trắng xám cực nhẹ */
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0; /* Màu xám Slate nhạt */
+  border-radius: 20px;
+  border: 2px solid #f8fafc;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #DC143C; /* Chuyển đỏ khi hover cho xịn */
+}
+
+/* Glassmorphism cho nền Trắng: Sạch và trong suốt */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+}
+
+/* Hiệu ứng trôi hạt bụi cho bản Trắng */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% -20%, #f1f5f9 0%, #ffffff 100%);
 }
