@@ -235,6 +235,8 @@ export interface PartnerGroup {
 }
 
 export interface PartnersSectionData {
+  use_single_image?: boolean; // Bật tắt chế độ 1 ảnh
+  single_image_url?: string;  // URL của ảnh đơn đó
   title_vi: string;
   title_en: string;
   groups: PartnerGroup[]; // Nhiều hàng đối tác khác nhau

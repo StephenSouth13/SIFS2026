@@ -98,7 +98,7 @@ export default function SubmissionsList() {
         {list.length === 0 ? (
           <div className="bg-white p-32 rounded-[4rem] text-center border border-slate-100 shadow-sm">
              <p className="text-slate-300 font-black italic uppercase tracking-[0.2em] text-sm">
-                Long ơi, chưa có ai đăng ký hết á!<br/>KPI 10% vẫn đang đợi nhé 🚀
+                Hiện tại<br/>KPI 10% vẫn đang đợi nhé 🚀
              </p>
           </div>
         ) : (
